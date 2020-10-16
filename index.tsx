@@ -33,7 +33,7 @@ class PlotRenderer extends React.Component {
     const nextTimestamp = lastTimestamp + 6000
 
     const timestamps = [...this.state.timestamps, nextTimestamp]
-    const values = [...this.state.values, window.parseFloat(Math.random() * (10 - 1) + 1).toFixed(2)]
+    const values = [...this.state.values, window.parseFloat(Math.random() * (10 - 1) + 1)]
 
     if (timestamps.length > 50) {
       console.log('removing older data')
@@ -50,8 +50,8 @@ class PlotRenderer extends React.Component {
 
   componentDidMount() {
     this.setState({
-      timestamps: [1589838401244, 1589838461244, 1589838521244],
-      values: [2.58, 7.11, 4.79]
+      timestamps: [1589838401244, 1589838407244, 1589838413244],
+      values: [5.56, 7.11, 6.5]
     })
 
     this.animationFrameId = window.setInterval(this.animate, 1000)
@@ -63,7 +63,9 @@ class PlotRenderer extends React.Component {
 
   render() {
     const config = {
-      table: newTable(this.state.timestamps.length).addColumn('_time', 'dateTime:RFC3339', 'time', this.state.timestamps).addColumn('_value', 'double', 'number', this.state.values),
+      table: newTable(this.state.timestamps.length)
+          .addColumn('_time', 'dateTime:RFC3339', 'time', this.state.timestamps)
+          .addColumn('_value', 'double', 'number', this.state.values),
       layers: [this.state.layer]
     };
 
