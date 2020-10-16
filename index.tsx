@@ -3,36 +3,66 @@ import ReactDOM from 'react-dom'
 
 import {Plot, newTable} from '@influxdata/giraffe'
 
-const PlotRenderer = ({config}) => {
-  return (
-    <div
-      style={{
-        width: "calc(70vw - 20px)",
-        height: "calc(70vh - 20px)",
-        margin: "40px",
-      }}
-    >
-      <Plot config={config} />
-    </div>
-  );
+const style = {
+  width: "calc(70vw - 20px)",
+  height: "calc(70vh - 20px)",
+  margin: "40px",
 };
 
-const table = newTable(3)
-  .addColumn('_time', 'dateTime:RFC3339', 'time', [1589838401244, 1589838461244, 1589838521244])
-  .addColumn('_value', 'double', 'number', [2.58, 7.11, 4.79]);
+class PlotRenderer extends React.Component {
+  constructor(props) {
+    super(props);
 
-const lineLayer = {
-  type: "line",
-  x: "_time",
-  y: "_value"
-};
+    this.state = {
+      timestamps: [],
+      values: [],
+      layer: {
+        type: 'line',
+        x: '_time',
+        y: '_value'
+      }
+    };
+  }
 
-const config = {
-  table: table,
-  layers: [lineLayer]
-};
+  componentDidMount() {
+    this.setState({
+      timestamps: [1589838401244, 1589838461244, 1589838521244],
+      values: [2.58, 7.11, 4.79]
+    })
+  }
+
+  render() {
+    const config = {
+      table: newTable(this.state.timestamps.length).addColumn('_time', 'dateTime:RFC3339', 'time', this.state.timestamps).addColumn('_value', 'double', 'number', this.state.values),
+      layers: [this.state.layer]
+    };
+
+    return (
+      <div style={style}>
+        <Plot config={config} />
+      </div>
+    );
+  }
+}
+
+// 1589838401244,
+// 1589838461244,
+// 1589838521244,
+// 1589838581244,
+// 1589838621244,
+
+// const table = newTable(3)
+//   .addColumn('_time', 'dateTime:RFC3339', 'time', [1589838401244, 1589838461244, 1589838521244])
+//   .addColumn('_value', 'double', 'number', [2.58, 7.11, 4.79]);
+
+// const lineLayer = ;
+
+// const config = {
+//   table: table,
+//   layers: [lineLayer]
+// };
 
 ReactDOM.render(
-  (<PlotRenderer config={config} />),
+  (<PlotRenderer />),
   document.getElementById('root')
 );

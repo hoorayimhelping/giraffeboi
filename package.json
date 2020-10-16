@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "webpack -c ./webpack.config.js"
+    "build": "rm -rf dist && webpack -c ./webpack.config.js"
   },
   "dependencies": {
     "@influxdata/giraffe": "^0.38.0",
