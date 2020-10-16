@@ -13,6 +13,8 @@ class PlotRenderer extends React.Component {
   constructor(props) {
     super(props);
 
+    this.animationFrameId;
+
     this.state = {
       timestamps: [],
       values: [],
@@ -20,8 +22,24 @@ class PlotRenderer extends React.Component {
         type: 'line',
         x: '_time',
         y: '_value'
-      }
+      },
     };
+
+    this.animate = this.animate.bind(this)
+  }
+
+  animate() {
+    const lastTimestamp = [...this.state.timestamps].pop()
+    const nextTimestamp = lastTimestamp + 60000
+
+    const timestamps = [...this.state.timestamps, nextTimestamp]
+    const values = [...this.state.values, window.parseFloat(Math.random() * (10 - 1) + 1).toFixed(2)]
+
+
+    this.setState({
+      timestamps,
+      values,
+    })
   }
 
   componentDidMount() {
@@ -29,6 +47,12 @@ class PlotRenderer extends React.Component {
       timestamps: [1589838401244, 1589838461244, 1589838521244],
       values: [2.58, 7.11, 4.79]
     })
+
+    this.animationFrameId = window.setInterval(this.animate, 1000)
+  }
+
+  componentWillUnmount() {
+    window.clearInterval(this.animationFrameId)
   }
 
   render() {
