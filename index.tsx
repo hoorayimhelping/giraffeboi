@@ -30,10 +30,16 @@ class PlotRenderer extends React.Component {
 
   animate() {
     const lastTimestamp = [...this.state.timestamps].pop()
-    const nextTimestamp = lastTimestamp + 60000
+    const nextTimestamp = lastTimestamp + 6000
 
     const timestamps = [...this.state.timestamps, nextTimestamp]
     const values = [...this.state.values, window.parseFloat(Math.random() * (10 - 1) + 1).toFixed(2)]
+
+    if (timestamps.length > 50) {
+      console.log('removing older data')
+      timestamps.shift()
+      values.shift()
+    }
 
 
     this.setState({
