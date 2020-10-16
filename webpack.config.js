@@ -2,19 +2,19 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-  entry: "./index.tsx",
+  entry: './src/client/index.tsx',
   module: {
     rules: [
       {
         test: /\.(ts|js)x?$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
           options: {
             presets: [
-              "@babel/preset-env",
-              "@babel/preset-react",
-              "@babel/preset-typescript",
+              '@babel/preset-env',
+              '@babel/preset-react',
+              '@babel/preset-typescript',
             ],
           },
         },
@@ -22,15 +22,10 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js"],
+    extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "bundle.js",
-  },
-  devServer: {
-    contentBase: path.join(__dirname, "dist"),
-    compress: true,
-    port: 4000,
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js',
   },
 };

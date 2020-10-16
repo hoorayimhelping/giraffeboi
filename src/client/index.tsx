@@ -25,40 +25,40 @@ class PlotRenderer extends React.Component {
       },
     };
 
-    this.animate = this.animate.bind(this)
+    this.animate = this.animate.bind(this);
   }
 
   animate() {
-    const lastTimestamp = [...this.state.timestamps].pop()
-    const nextTimestamp = lastTimestamp + 6000
+    const lastTimestamp = [...this.state.timestamps].pop();
+    const nextTimestamp = lastTimestamp + 6000;
 
-    const timestamps = [...this.state.timestamps, nextTimestamp]
-    const values = [...this.state.values, window.parseFloat(Math.random() * (10 - 1) + 1)]
+    const timestamps = [...this.state.timestamps, nextTimestamp];
+    const values = [...this.state.values, window.parseFloat(Math.random() * (10 - 1) + 1)];
 
     if (timestamps.length > 50) {
-      console.log('removing older data')
-      timestamps.shift()
-      values.shift()
+      console.log('removing older data');
+      timestamps.shift();
+      values.shift();
     }
 
 
     this.setState({
       timestamps,
       values,
-    })
+    });
   }
 
   componentDidMount() {
     this.setState({
       timestamps: [1589838401244, 1589838407244, 1589838413244],
       values: [5.56, 7.11, 6.5]
-    })
+    });
 
-    this.animationFrameId = window.setInterval(this.animate, 1000)
+    this.animationFrameId = window.setInterval(this.animate, 1000);
   }
 
   componentWillUnmount() {
-    window.clearInterval(this.animationFrameId)
+    window.clearInterval(this.animationFrameId);
   }
 
   render() {
