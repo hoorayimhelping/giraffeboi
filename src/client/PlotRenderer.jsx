@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import {Plot, newTable} from '@influxdata/giraffe'
+import {Plot, newTable, fromFlux} from '@influxdata/giraffe'
 
 const style = {
   width: "calc(70vw - 20px)",
@@ -16,20 +16,78 @@ export class PlotRenderer extends React.Component {
     this.animationFrameId;
 
     this.state = {
-      timestamps: [],
-      values: [],
       layer: {
         type: 'line',
         x: '_time',
         y: '_value'
       },
+      table: {},
+      timestamps: [],
+      values: [],
     };
 
-    this.animate = this.animate.bind(this);
+    this.animateFakeData = this.animateFakeData.bind(this);
+    this.animateRealData = this.animateRealData.bind(this);
     this.createFakeDataTable = this.createFakeDataTable.bind(this);
+    this.fetchData = this.fetchData.bind(this);
   }
 
-  animate() {
+  async componentDidMount() {
+    try {
+      const resp = await this.fetchData();
+      const resultsCSV = await resp.text();
+      let results;
+
+      try {
+        results = fromFlux(resultsCSV);
+      } catch (error) {
+        console.error('error', error.message)
+      }
+
+      this.setState({
+        table: results.table
+      })
+      // this.animationFrameId = window.setInterval(this.animateRealData, 1000);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  componentWillUnmount() {
+    window.clearInterval(this.animationFrameId);
+  }
+
+  render() {
+    const config = {
+      table: this.state.table,
+      layers: [this.state.layer]
+    };
+
+    if (!Object.keys(config.table).length) {
+      return null
+    }
+
+    return (
+      <div style={style}>
+        <Plot config={config} />
+      </div>
+    );
+  }
+
+  fetchData() {
+    return fetch('http://localhost:8617/query', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    })
+  }
+
+  animateRealData() {
+
+  }
+
+  animateFakeData() {
     const lastTimestamp = [...this.state.timestamps].pop();
     const nextTimestamp = lastTimestamp + 6000;
 
@@ -55,29 +113,7 @@ export class PlotRenderer extends React.Component {
           .addColumn('_value', 'double', 'number', this.state.values)
   }
 
-  componentDidMount() {
-    this.setState({
-      timestamps: [1589838401244, 1589838407244, 1589838413244],
-      values: [5.56, 7.11, 6.5]
-    });
+  createRealDataTable() {
 
-    this.animationFrameId = window.setInterval(this.animate, 1000);
-  }
-
-  componentWillUnmount() {
-    window.clearInterval(this.animationFrameId);
-  }
-
-  render() {
-    const config = {
-      table: this.createFakeDataTable(),
-      layers: [this.state.layer]
-    };
-
-    return (
-      <div style={style}>
-        <Plot config={config} />
-      </div>
-    );
   }
 }
