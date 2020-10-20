@@ -17,6 +17,14 @@ const influxProxy = axios.create({
 const app = express();
 const port = 8617;
 
+app.get('/', (req, res) => {
+  res.sendFile('index.html', { root: './' });
+});
+
+app.get('/dist/bundle.js', (req, res) => {
+  res.sendFile('bundle.js', { root: './dist' });
+})
+
 app.get('/query', (req, res) => {
   const orgID = '275ac1e8a61d71f2';
   const bucket = 'telegraf';
