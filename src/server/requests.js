@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import axios from 'axios'
+
 
 export class Requester {
   constructor(url, token, org, bucket) {

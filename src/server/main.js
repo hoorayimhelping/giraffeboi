@@ -3,10 +3,13 @@ import express from 'express'
 
 import axios from 'axios'
 
-const requester = axios.create({
-  baseURL: process.env.INFLUX_URL,
+const baseURL = process.env.INFLUX_URL; // url of your cloud instance (e.g. https://us-west-2-1.aws.cloud2.influxdata.com/)
+const influxToken = process.env.INFLUX_TOKEN // create an all access token in the UI, export it as INFLUX_TOKEN
+
+const influxProxy = axios.create({
+  baseURL,
   headers: {
-    'Authorization': `Token ${process.env.INFLUX_TOKEN}`,
+    'Authorization': `Token ${influxToken}`,
     'Content-Type': 'application/json'
   }
 })
@@ -17,7 +20,6 @@ const port = 8617;
 app.get('/query', (req, res) => {
   const orgID = '275ac1e8a61d71f2';
   const bucket = 'telegraf';
-  console.log('query route');
 
   const query = `
   from(bucket: "telegraf")
@@ -27,7 +29,7 @@ app.get('/query', (req, res) => {
     |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
   `.trim();
 
-  requester.request({
+  influxProxy.request({
     method: 'post',
     url: 'api/v2/query',
     params: {
@@ -39,11 +41,9 @@ app.get('/query', (req, res) => {
       dialect :{"annotations":["group","datatype","default"]}
     }
   }).then((response) => {
-    console.log('ok', response)
-    res.sendStatus(200)
+    res.send(response.data)
   }).catch(error => {
-    console.error(error)
-    res.send(error)
+    res.send(error.message)
   });
 
 })
