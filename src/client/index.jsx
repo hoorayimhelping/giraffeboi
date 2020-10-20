@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import {PlotRenderer} from './PlotRenderer.jsx'
+import {PlotRenderer} from './PlotRenderer'
 
 // 1589838401244,
 // 1589838461244,
