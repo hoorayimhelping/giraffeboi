@@ -26,6 +26,7 @@ export class PlotRenderer extends React.Component {
     };
 
     this.animate = this.animate.bind(this);
+    this.createFakeDataTable = this.createFakeDataTable.bind(this);
   }
 
   animate() {
@@ -48,6 +49,12 @@ export class PlotRenderer extends React.Component {
     });
   }
 
+  createFakeDataTable() {
+    return newTable(this.state.timestamps.length)
+          .addColumn('_time', 'dateTime:RFC3339', 'time', this.state.timestamps)
+          .addColumn('_value', 'double', 'number', this.state.values)
+  }
+
   componentDidMount() {
     this.setState({
       timestamps: [1589838401244, 1589838407244, 1589838413244],
@@ -63,9 +70,7 @@ export class PlotRenderer extends React.Component {
 
   render() {
     const config = {
-      table: newTable(this.state.timestamps.length)
-          .addColumn('_time', 'dateTime:RFC3339', 'time', this.state.timestamps)
-          .addColumn('_value', 'double', 'number', this.state.values),
+      table: this.createFakeDataTable(),
       layers: [this.state.layer]
     };
 
