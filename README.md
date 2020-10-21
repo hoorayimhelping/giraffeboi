@@ -9,10 +9,10 @@ The app has a small express server to act as a proxy to an influxdb instance. Th
 ### Starting the Server
 
 ```sh
-INFLUX_URL=http://localhost:9999 INFLUX_TOKEN=foo node src/server/main.js
+INFLUX_URL=http://localhost:9999 INFLUX_TOKEN=foo ORG_ID=1234 node src/server/main.js
 ```
 
-(fill in your proper [`INFLUX_URL`](https://docs.influxdata.com/influxdb/v2.0/reference/urls/) and [`INFLUX_TOKEN`](https://docs.influxdata.com/influxdb/v2.0/security/tokens/create-token/) values). 
+(fill in your proper [`INFLUX_URL`,](https://docs.influxdata.com/influxdb/v2.0/reference/urls/) [`INFLUX_TOKEN`,](https://docs.influxdata.com/influxdb/v2.0/security/tokens/create-token/) [`ORG_ID`](https://docs.influxdata.com/influxdb/v2.0/organizations/view-orgs/) values.)
 
 ### Starting the UI
 ```sh
