@@ -115,8 +115,6 @@ export class PlotRenderer extends React.Component {
       console.error('error', error.message)
     }
 
-    console.log('table', results.table)
-
     this.setState({
       table: results.table
     })
