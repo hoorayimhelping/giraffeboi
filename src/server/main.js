@@ -4,8 +4,8 @@ import express from 'express'
 import axios from 'axios'
 
 const baseURL = process.env.INFLUX_URL; // url of your cloud instance (e.g. https://us-west-2-1.aws.cloud2.influxdata.com/)
-const influxToken = process.env.INFLUX_TOKEN // create an all access token in the UI, export it as INFLUX_TOKEN
-const orgID = process.env.ORG_ID // export your org id;
+const influxToken = process.env.INFLUX_TOKEN; // create an all access token in the UI, export it as INFLUX_TOKEN
+const orgID = process.env.ORG_ID; // export your org id;
 
 const influxProxy = axios.create({
   baseURL,
@@ -13,7 +13,7 @@ const influxProxy = axios.create({
     'Authorization': `Token ${influxToken}`,
     'Content-Type': 'application/json'
   }
-})
+});
 
 const app = express();
 const port = 8617;

@@ -55,7 +55,7 @@ export class PlotRenderer extends React.Component {
     };
 
     if (!Object.keys(config.table).length) {
-      return null
+      return null;
     }
 
     return (
@@ -71,7 +71,7 @@ export class PlotRenderer extends React.Component {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
       }
-    })
+    });
   }
 
   animateRealData() {
@@ -101,7 +101,7 @@ export class PlotRenderer extends React.Component {
   createFakeDataTable() {
     return newTable(this.state.timestamps.length)
           .addColumn('_time', 'dateTime:RFC3339', 'time', this.state.timestamps)
-          .addColumn('_value', 'double', 'number', this.state.values)
+          .addColumn('_value', 'double', 'number', this.state.values);
   }
 
   async createRealDataTable() {
@@ -112,11 +112,11 @@ export class PlotRenderer extends React.Component {
     try {
       results = fromFlux(resultsCSV);
     } catch (error) {
-      console.error('error', error.message)
+      console.error('error', error.message);
     }
 
     this.setState({
       table: results.table
-    })
+    });
   }
 }
