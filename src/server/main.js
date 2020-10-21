@@ -31,7 +31,7 @@ app.get('/query', (req, res) => {
 
   const query = `
   from(bucket: "telegraf")
-    |> range(start: -1h)
+    |> range(start: -30s)
     |> filter(fn: (r) => r._measurement == "mem")
     |> filter(fn: (r) => r._field == "used_percent")
     |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)

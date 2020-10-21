@@ -9,6 +9,8 @@ const style = {
   margin: "40px",
 };
 
+const REASONABLE_API_REFRESH_RATE = 30000;
+
 export class PlotRenderer extends React.Component {
   constructor(props) {
     super(props);
@@ -29,25 +31,14 @@ export class PlotRenderer extends React.Component {
     this.animateFakeData = this.animateFakeData.bind(this);
     this.animateRealData = this.animateRealData.bind(this);
     this.createFakeDataTable = this.createFakeDataTable.bind(this);
+    this.createRealDataTable = this.createRealDataTable.bind(this);
     this.fetchData = this.fetchData.bind(this);
   }
 
   async componentDidMount() {
     try {
-      const resp = await this.fetchData();
-      const resultsCSV = await resp.text();
-      let results;
-
-      try {
-        results = fromFlux(resultsCSV);
-      } catch (error) {
-        console.error('error', error.message)
-      }
-
-      this.setState({
-        table: results.table
-      })
-      // this.animationFrameId = window.setInterval(this.animateRealData, 1000);
+      this.createRealDataTable();
+      this.animationFrameId = window.setInterval(this.animateRealData, REASONABLE_API_REFRESH_RATE);
     } catch (error) {
       console.error(error);
     }
@@ -84,7 +75,7 @@ export class PlotRenderer extends React.Component {
   }
 
   animateRealData() {
-
+    this.createRealDataTable();
   }
 
   animateFakeData() {
@@ -113,7 +104,21 @@ export class PlotRenderer extends React.Component {
           .addColumn('_value', 'double', 'number', this.state.values)
   }
 
-  createRealDataTable() {
+  async createRealDataTable() {
+    const resp = await this.fetchData();
+    const resultsCSV = await resp.text();
+    let results;
 
+    try {
+      results = fromFlux(resultsCSV);
+    } catch (error) {
+      console.error('error', error.message)
+    }
+
+    console.log('table', results.table)
+
+    this.setState({
+      table: results.table
+    })
   }
 }
