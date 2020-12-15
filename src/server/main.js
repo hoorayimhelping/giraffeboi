@@ -57,6 +57,46 @@ app.get('/query', (req, res) => {
 
 })
 
+app.get('/apiUrlKey', (req, res) => {
+  res.send({ url: mapboxUrl, key: apiKey })
+  })
+
+app.get('/map', (req, res) => {
+
+  const { x, y, z } = req.query
+
+  console.log(req.query)
+
+  // var mapboxClient = mapboxSdk({ accessToken: apiKey });
+
+  // var request = mapboxClient.getStaticImage({
+  //       ownerId: 'mapbox',
+  //       styleId: 'ckhl79okh00o919npquotuqxp',
+  //       width: 500,
+  //       height: 350,
+  //       position: {
+  //         coordinates: [x, y],
+  //         zoom: z
+  //       },
+  //     before_layer: 'road-label',
+  //     });
+  // var staticImageUrl = request.url();
+  // console.log("staticimageurl: ", staticImageUrl)
+
+  console.log('maboxUrls', mapboxUrl, x, y, z)
+  const link = `https://api.mapbox.com/styles/v1/influxdata/ckhl79okh00o919npquotuqxp/tiles/256/${z}/${x}/${y}?access_token=${apiKey}`
+  
+  axios
+    .get(link)
+    .then((response) => {
+      console.log(response.data)
+      res.send(response.data)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+})
+
 app.listen(port, () => {
   console.log(`listening on port :${port}`);
 });

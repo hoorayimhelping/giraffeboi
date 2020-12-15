@@ -9,7 +9,8 @@
     "server-start": "node src/server/main.js"
   },
   "dependencies": {
-    "@influxdata/giraffe": "^0.38.0",
+    "@influxdata/giraffe": "../giraffe/giraffe/influxdata-giraffe-2.0.0.tgz",
+    "@mapbox/mapbox-sdk": "^0.11.0",
     "axios": "^0.20.0",
     "express": "^4.17.1",
     "react": "^16.14.0",
