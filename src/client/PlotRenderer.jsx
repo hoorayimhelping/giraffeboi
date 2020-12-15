@@ -39,7 +39,7 @@ export class PlotRenderer extends React.Component {
           },
         ],
         tileServerConfiguration: {
-          tileServerUrl: "",
+          tileServerUrl: "http://localhost:8617/map/?z=1&x=40&y=76",
           bingKey: "",
         },
       },
@@ -52,16 +52,16 @@ export class PlotRenderer extends React.Component {
     this.animateRealData = this.animateRealData.bind(this);
     this.createFakeDataTable = this.createFakeDataTable.bind(this);
     this.createRealDataTable = this.createRealDataTable.bind(this);
-    this.getMapUrlKey = this.getMapUrlKey.bind(this);
-    this.getMap = this.getMap.bind(this);
+    // this.getMapUrlKey = this.getMapUrlKey.bind(this);
+    // this.getMap = this.getMap.bind(this);
     this.fetchData = this.fetchData.bind(this);
   }
 
   async componentDidMount() {
     try {
       this.createRealDataTable();
-      await this.getMapUrlKey();
-      this.getMap();
+      // await this.getMapUrlKey();
+      // this.getMap();
       this.animationFrameId = window.setInterval(
         this.animateRealData,
         REASONABLE_API_REFRESH_RATE
@@ -149,47 +149,47 @@ export class PlotRenderer extends React.Component {
     });
   }
 
-  fetchMapUrlKey() {
-    return fetch("http://localhost:8617/apiUrlKey", {
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-    });
-  }
+  // fetchMapUrlKey() {
+  //   return fetch("http://localhost:8617/apiUrlKey", {
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "Access-Control-Allow-Origin": "*",
+  //     },
+  //   });
+  // }
 
-  async getMapUrlKey() {
-    const resp = await this.fetchMapUrlKey();
-    const res = await resp.json();
-    console.log("This is response", res);
-    const { url, key } = res;
-    const tileServerConfiguration = {
-      tileServerUrl: url + "?access_token=" + key,
-      bingKey: "",
-    };
-    this.setState({
-      layer: {
-        ...this.state.layer,
-        tileServerConfiguration: tileServerConfiguration,
-      },
-    });
-    return resp;
-  }
+  // async getMapUrlKey() {
+  //   const resp = await this.fetchMapUrlKey();
+  //   const res = await resp.json();
+  //   console.log("This is response", res);
+  //   const { url, key } = res;
+  //   const tileServerConfiguration = {
+  //     tileServerUrl: url + "?access_token=" + key,
+  //     bingKey: "",
+  //   };
+  //   this.setState({
+  //     layer: {
+  //       ...this.state.layer,
+  //       tileServerConfiguration: tileServerConfiguration,
+  //     },
+  //   });
+  //   return resp;
+  // }
 
-  fetchMapData() {
-    return fetch("http://localhost:8617/map?z=1&x=40&y=76", {
-      headers: {
-        // "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-    });
-  }
+  // fetchMapData() {
+  //   return fetch("http://localhost:8617/map?z=1&x=40&y=76", {
+  //     headers: {
+  //       // "Content-Type": "application/json",
+  //       "Access-Control-Allow-Origin": "*",
+  //     },
+  //   });
+  // }
 
-  async getMap() {
-    console.log("I am in createrealdatatable");
-    const resp = await this.fetchMapData();
-    const res = resp.data;
-    console.log("response: ", resp);
-    console.log("This is response", res);
-  }
+  // async getMap() {
+  //   console.log("I am in createrealdatatable");
+  //   const resp = await this.fetchMapData();
+  //   const res = resp.data;
+  //   console.log("response: ", resp);
+  //   console.log("This is response", res);
+  // }
 }

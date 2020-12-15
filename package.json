@@ -14,7 +14,8 @@
     "axios": "^0.20.0",
     "express": "^4.17.1",
     "react": "^16.14.0",
-    "react-dom": "^16.14.0"
+    "react-dom": "^16.14.0",
+    "request-promise": "^4.2.6"
   },
   "devDependencies": {
     "@babel/core": "^7.12.1",

@@ -1,7 +1,12 @@
 #!/usr/bin/env node
+
+import dotenv from 'dotenv'
+dotenv.config()
 import express from 'express'
+import request from 'request-promise'
 
 import axios from 'axios'
+import moment from 'moment'
 
 const baseURL = process.env.INFLUX_URL; // url of your cloud instance (e.g. https://us-west-2-1.aws.cloud2.influxdata.com/)
 const influxToken = process.env.INFLUX_TOKEN; // create an all access token in the UI, export it as INFLUX_TOKEN
@@ -62,39 +67,37 @@ app.get('/apiUrlKey', (req, res) => {
   })
 
 app.get('/map', (req, res) => {
-
   const { x, y, z } = req.query
 
-  console.log(req.query)
+  console.log('xyz', x, y, z)
 
-  // var mapboxClient = mapboxSdk({ accessToken: apiKey });
-
-  // var request = mapboxClient.getStaticImage({
-  //       ownerId: 'mapbox',
-  //       styleId: 'ckhl79okh00o919npquotuqxp',
-  //       width: 500,
-  //       height: 350,
-  //       position: {
-  //         coordinates: [x, y],
-  //         zoom: z
-  //       },
-  //     before_layer: 'road-label',
-  //     });
-  // var staticImageUrl = request.url();
-  // console.log("staticimageurl: ", staticImageUrl)
-
-  console.log('maboxUrls', mapboxUrl, x, y, z)
   const link = `https://api.mapbox.com/styles/v1/influxdata/ckhl79okh00o919npquotuqxp/tiles/256/${z}/${x}/${y}?access_token=${apiKey}`
+
+  let options = { method: 'GET', uri: link, headers: { 'Accept': 'image/png' } }
   
-  axios
-    .get(link)
-    .then((response) => {
-      console.log(response.data)
-      res.send(response.data)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+  request(options.uri, options).pipe(res)
+
+  // axios
+  //   .get(link)
+  //   .then((response) => {
+  //     console.log(response)
+  //     // res.end(response.data, "binary")
+  //     // res.send(response.data)
+  //     // res.contentType('image/png')
+  //     // res.end(response.data, "binary")
+
+  //     // let image = Buffer.from(response.data, 'binary').toString('base64')
+  //     // res.send(image);
+
+  //     res.writeHead(200, {
+  //       'Content-Type': 'image/png',
+  //       'Content-Length': response.data.length
+  //     });
+  //     res.end(response.data);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err)
+  //   })
 })
 
 app.listen(port, () => {
