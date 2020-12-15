@@ -21,8 +21,8 @@ export class PlotRenderer extends React.Component {
       layer: {
         type: "geo",
         lat: 40,
-        lon: -76,
-        zoom: 6,
+        lon: 76,
+        zoom: 1,
         allowPanAndZoom: true,
         detectCoordinateFields: false,
         layers: [
@@ -39,7 +39,7 @@ export class PlotRenderer extends React.Component {
           },
         ],
         tileServerConfiguration: {
-          tileServerUrl: "http://localhost:8617/map/?z=1&x=40&y=76",
+          tileServerUrl: "http://localhost:8617/map?z={z}&x={x}&y={y}",
           bingKey: "",
         },
       },

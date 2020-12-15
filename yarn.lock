@@ -979,7 +979,7 @@
 
 "@influxdata/giraffe@../giraffe/giraffe/influxdata-giraffe-2.0.0.tgz":
   version "2.0.0"
-  resolved "../giraffe/giraffe/influxdata-giraffe-2.0.0.tgz#ca429fa02bf75998db515c69b6d0ad351a4e0db4"
+  resolved "../giraffe/giraffe/influxdata-giraffe-2.0.0.tgz#50a388a917fa6c657099f4bb5b44c46dcbe300cc"
 
 "@jest/types@^25.5.0":
   version "25.5.0"
