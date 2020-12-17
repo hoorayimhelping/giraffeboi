@@ -11,6 +11,10 @@ import moment from 'moment'
 const baseURL = process.env.INFLUX_URL; // url of your cloud instance (e.g. https://us-west-2-1.aws.cloud2.influxdata.com/)
 const influxToken = process.env.INFLUX_TOKEN; // create an all access token in the UI, export it as INFLUX_TOKEN
 const orgID = process.env.ORG_ID; // export your org id;
+const mapboxUrl = process.env.API_URL;
+const apiKey = process.env.API_KEY; //export your own apiKey;
+const directMapboxUrl = process.env.DIRECT_URL;
+const localMapEndpoint = process.env.MAP_ENDPOINT;
 
 const influxProxy = axios.create({
   baseURL,
@@ -62,42 +66,18 @@ app.get('/query', (req, res) => {
 
 })
 
-app.get('/apiUrlKey', (req, res) => {
-  res.send({ url: mapboxUrl, key: apiKey })
-  })
+app.get('/tileServerUrl', (req, res) => {
+  res.send({ url: localMapEndpoint })
+})
 
-app.get('/map', (req, res) => {
-  const { x, y, z } = req.query
-
-  console.log('xyz', x, y, z)
+app.get('/map/:z/:x/:y', (req, res) => {
+  const { x, y, z } = req.params
 
   const link = `https://api.mapbox.com/styles/v1/influxdata/ckhl79okh00o919npquotuqxp/tiles/256/${z}/${x}/${y}?access_token=${apiKey}`
 
   let options = { method: 'GET', uri: link, headers: { 'Accept': 'image/png' } }
   
   request(options.uri, options).pipe(res)
-
-  // axios
-  //   .get(link)
-  //   .then((response) => {
-  //     console.log(response)
-  //     // res.end(response.data, "binary")
-  //     // res.send(response.data)
-  //     // res.contentType('image/png')
-  //     // res.end(response.data, "binary")
-
-  //     // let image = Buffer.from(response.data, 'binary').toString('base64')
-  //     // res.send(image);
-
-  //     res.writeHead(200, {
-  //       'Content-Type': 'image/png',
-  //       'Content-Length': response.data.length
-  //     });
-  //     res.end(response.data);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err)
-  //   })
 })
 
 app.listen(port, () => {

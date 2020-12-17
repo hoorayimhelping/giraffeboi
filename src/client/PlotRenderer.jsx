@@ -21,8 +21,8 @@ export class PlotRenderer extends React.Component {
       layer: {
         type: "geo",
         lat: 40,
-        lon: 76,
-        zoom: 1,
+        lon: -76,
+        zoom: 6,
         allowPanAndZoom: true,
         detectCoordinateFields: false,
         layers: [
@@ -39,7 +39,7 @@ export class PlotRenderer extends React.Component {
           },
         ],
         tileServerConfiguration: {
-          tileServerUrl: "http://localhost:8617/map?z={z}&x={x}&y={y}",
+          tileServerUrl: "",
           bingKey: "",
         },
       },
@@ -48,20 +48,15 @@ export class PlotRenderer extends React.Component {
       values: [],
     };
 
-    this.animateFakeData = this.animateFakeData.bind(this);
-    this.animateRealData = this.animateRealData.bind(this);
-    this.createFakeDataTable = this.createFakeDataTable.bind(this);
-    this.createRealDataTable = this.createRealDataTable.bind(this);
-    // this.getMapUrlKey = this.getMapUrlKey.bind(this);
+    this.getTileServerUrl = this.getTileServerUrl.bind(this);
+    this.fetchInfluxData = this.fetchInfluxData.bind(this);
     // this.getMap = this.getMap.bind(this);
-    this.fetchData = this.fetchData.bind(this);
   }
 
   async componentDidMount() {
     try {
-      this.createRealDataTable();
-      // await this.getMapUrlKey();
-      // this.getMap();
+      this.fetchInfluxData();
+      await this.getTileServerUrl();
       this.animationFrameId = window.setInterval(
         this.animateRealData,
         REASONABLE_API_REFRESH_RATE
@@ -101,39 +96,7 @@ export class PlotRenderer extends React.Component {
     });
   }
 
-  animateRealData() {
-    this.createRealDataTable();
-  }
-
-  animateFakeData() {
-    const lastTimestamp = [...this.state.timestamps].pop();
-    const nextTimestamp = lastTimestamp + 6000;
-
-    const timestamps = [...this.state.timestamps, nextTimestamp];
-    const values = [
-      ...this.state.values,
-      window.parseFloat(Math.random() * (10 - 1) + 1),
-    ];
-
-    if (timestamps.length > 50) {
-      console.log("removing older data");
-      timestamps.shift();
-      values.shift();
-    }
-
-    this.setState({
-      timestamps,
-      values,
-    });
-  }
-
-  createFakeDataTable() {
-    return newTable(this.state.timestamps.length)
-      .addColumn("_time", "dateTime:RFC3339", "time", this.state.timestamps)
-      .addColumn("_value", "double", "number", this.state.values);
-  }
-
-  async createRealDataTable() {
+  async fetchInfluxData() {
     const resp = await this.fetchData();
     const resultsCSV = await resp.text();
     let results;
@@ -149,47 +112,48 @@ export class PlotRenderer extends React.Component {
     });
   }
 
-  // fetchMapUrlKey() {
-  //   return fetch("http://localhost:8617/apiUrlKey", {
+  // fetchMapData(tileServerUrl) {
+  //   return fetch(tileServerUrl, {
   //     headers: {
-  //       "Content-Type": "application/json",
-  //       "Access-Control-Allow-Origin": "*",
-  //     },
-  //   });
-  // }
-
-  // async getMapUrlKey() {
-  //   const resp = await this.fetchMapUrlKey();
-  //   const res = await resp.json();
-  //   console.log("This is response", res);
-  //   const { url, key } = res;
-  //   const tileServerConfiguration = {
-  //     tileServerUrl: url + "?access_token=" + key,
-  //     bingKey: "",
-  //   };
-  //   this.setState({
-  //     layer: {
-  //       ...this.state.layer,
-  //       tileServerConfiguration: tileServerConfiguration,
-  //     },
-  //   });
-  //   return resp;
-  // }
-
-  // fetchMapData() {
-  //   return fetch("http://localhost:8617/map?z=1&x=40&y=76", {
-  //     headers: {
-  //       // "Content-Type": "application/json",
   //       "Access-Control-Allow-Origin": "*",
   //     },
   //   });
   // }
 
   // async getMap() {
-  //   console.log("I am in createrealdatatable");
-  //   const resp = await this.fetchMapData();
+  //   console.log("I am in getMap");
+  //   const resp = await this.fetchMapData(
+  //     this.state.layer.tileServerConfiguration.tileServerUrl
+  //   );
   //   const res = resp.data;
   //   console.log("response: ", resp);
   //   console.log("This is response", res);
   // }
+
+  fetchTileServerUrl() {
+    return fetch("http://localhost:8617/tileServerUrl", {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+  }
+
+  async getTileServerUrl() {
+    const resp = await this.fetchTileServerUrl();
+    const res = await resp.json();
+    console.log("This is response", res);
+    const { url } = res;
+    const tileServerConfiguration = {
+      tileServerUrl: url,
+      bingKey: "",
+    };
+    this.setState({
+      layer: {
+        ...this.state.layer,
+        tileServerConfiguration: tileServerConfiguration,
+      },
+    });
+    return resp;
+  }
 }
