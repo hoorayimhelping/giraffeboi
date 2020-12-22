@@ -11,7 +11,6 @@ import moment from 'moment'
 const baseURL = process.env.INFLUX_URL; // url of your cloud instance (e.g. https://us-west-2-1.aws.cloud2.influxdata.com/)
 const influxToken = process.env.INFLUX_TOKEN; // create an all access token in the UI, export it as INFLUX_TOKEN
 const orgID = process.env.ORG_ID; // export your org id;
-const mapboxUrl = process.env.API_URL;
 const apiKey = process.env.API_KEY; //export your own apiKey;
 const directMapboxUrl = process.env.DIRECT_URL;
 const localMapEndpoint = process.env.MAP_ENDPOINT;
@@ -36,16 +35,16 @@ app.get('/dist/bundle.js', (req, res) => {
 })
 
 app.get('/query', (req, res) => {
-
-  const bucket = 'telegraf';
-
-  const query = `
-  from(bucket: "telegraf")
-    |> range(start: -30s)
-    |> filter(fn: (r) => r._measurement == "mem")
-    |> filter(fn: (r) => r._field == "used_percent")
+    const start = '2019-02-01 00:00:00.000'
+    const stop = '2020-02-28 23:59:00.000'
+  
+    const query = `
+    from(bucket: "palak+cloud2's Bucket")
+    |> range(start: ${moment(start).toISOString()}, stop: ${moment(stop).toISOString()})
+    |> filter(fn: (r) => r["_measurement"] == "migration")
     |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
-  `.trim();
+    |> yield(name: "mean")
+    `.trim();
 
   influxProxy.request({
     method: 'post',
