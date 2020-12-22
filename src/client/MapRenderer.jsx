@@ -11,7 +11,7 @@ const style = {
 
 const REASONABLE_API_REFRESH_RATE = 30000;
 
-export class PlotRenderer extends React.Component {
+export class MapRenderer extends React.Component {
   constructor(props) {
     super(props);
 
@@ -88,7 +88,7 @@ export class PlotRenderer extends React.Component {
   }
 
   fetchData() {
-    return fetch("http://localhost:8617/query", {
+    return fetch("http://localhost:8617/mapquery", {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
