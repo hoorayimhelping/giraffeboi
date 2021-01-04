@@ -1,7 +1,7 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from "react";
+import ReactDOM from "react-dom";
 
-import {Plot, newTable, fromFlux} from '@influxdata/giraffe'
+import { Plot, newTable, fromFlux } from "@influxdata/giraffe";
 
 const style = {
   width: "calc(70vw - 20px)",
@@ -11,7 +11,7 @@ const style = {
 
 const REASONABLE_API_REFRESH_RATE = 30000;
 
-export class PlotRenderer extends React.Component {
+export class LineRenderer extends React.Component {
   constructor(props) {
     super(props);
 
@@ -19,9 +19,9 @@ export class PlotRenderer extends React.Component {
 
     this.state = {
       layer: {
-        type: 'line',
-        x: '_time',
-        y: '_value'
+        type: "line",
+        x: "_time",
+        y: "_value",
       },
       table: {},
       timestamps: [],
@@ -38,7 +38,10 @@ export class PlotRenderer extends React.Component {
   async componentDidMount() {
     try {
       this.createRealDataTable();
-      this.animationFrameId = window.setInterval(this.animateRealData, REASONABLE_API_REFRESH_RATE);
+      this.animationFrameId = window.setInterval(
+        this.animateRealData,
+        REASONABLE_API_REFRESH_RATE
+      );
     } catch (error) {
       console.error(error);
     }
@@ -51,7 +54,7 @@ export class PlotRenderer extends React.Component {
   render() {
     const config = {
       table: this.state.table,
-      layers: [this.state.layer]
+      layers: [this.state.layer],
     };
 
     if (!Object.keys(config.table).length) {
@@ -66,11 +69,11 @@ export class PlotRenderer extends React.Component {
   }
 
   fetchData() {
-    return fetch('http://localhost:8617/query', {
+    return fetch("http://localhost:8617/linequery", {
       headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
     });
   }
 
@@ -83,14 +86,16 @@ export class PlotRenderer extends React.Component {
     const nextTimestamp = lastTimestamp + 6000;
 
     const timestamps = [...this.state.timestamps, nextTimestamp];
-    const values = [...this.state.values, window.parseFloat(Math.random() * (10 - 1) + 1)];
+    const values = [
+      ...this.state.values,
+      window.parseFloat(Math.random() * (10 - 1) + 1),
+    ];
 
     if (timestamps.length > 50) {
-      console.log('removing older data');
+      console.log("removing older data");
       timestamps.shift();
       values.shift();
     }
-
 
     this.setState({
       timestamps,
@@ -100,8 +105,8 @@ export class PlotRenderer extends React.Component {
 
   createFakeDataTable() {
     return newTable(this.state.timestamps.length)
-          .addColumn('_time', 'dateTime:RFC3339', 'time', this.state.timestamps)
-          .addColumn('_value', 'double', 'number', this.state.values);
+      .addColumn("_time", "dateTime:RFC3339", "time", this.state.timestamps)
+      .addColumn("_value", "double", "number", this.state.values);
   }
 
   async createRealDataTable() {
@@ -112,11 +117,11 @@ export class PlotRenderer extends React.Component {
     try {
       results = fromFlux(resultsCSV);
     } catch (error) {
-      console.error('error', error.message);
+      console.error("error", error.message);
     }
 
     this.setState({
-      table: results.table
+      table: results.table,
     });
   }
 }

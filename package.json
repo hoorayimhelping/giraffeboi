@@ -6,14 +6,18 @@
   "scripts": {
     "client-build": "rm -rf dist && webpack",
     "client-dev": "rm -rf dist && webpack --watch --progress",
-    "server-start": "node src/server/main.js"
+    "server-start": "node src/server/main.js",
+    "prettier:fix": "prettier --write 'src/**/*.{js,jsx}'"
   },
   "dependencies": {
-    "@influxdata/giraffe": "^0.38.0",
+    "@influxdata/giraffe": "^2.0.0",
     "axios": "^0.20.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "prettier": "^2.2.1",
     "react": "^16.14.0",
-    "react-dom": "^16.14.0"
+    "react-dom": "^16.14.0",
+    "request-promise": "^4.2.6"
   },
   "devDependencies": {
     "@babel/core": "^7.12.1",
