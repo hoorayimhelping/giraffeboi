@@ -50,7 +50,6 @@ export class MapRenderer extends React.Component {
 
     this.getTileServerUrl = this.getTileServerUrl.bind(this);
     this.fetchInfluxData = this.fetchInfluxData.bind(this);
-    // this.getMap = this.getMap.bind(this);
   }
 
   async componentDidMount() {
@@ -111,24 +110,6 @@ export class MapRenderer extends React.Component {
       table: results.table,
     });
   }
-
-  // fetchMapData(tileServerUrl) {
-  //   return fetch(tileServerUrl, {
-  //     headers: {
-  //       "Access-Control-Allow-Origin": "*",
-  //     },
-  //   });
-  // }
-
-  // async getMap() {
-  //   console.log("I am in getMap");
-  //   const resp = await this.fetchMapData(
-  //     this.state.layer.tileServerConfiguration.tileServerUrl
-  //   );
-  //   const res = resp.data;
-  //   console.log("response: ", resp);
-  //   console.log("This is response", res);
-  // }
 
   fetchTileServerUrl() {
     return fetch("http://localhost:8617/tileServerUrl", {
