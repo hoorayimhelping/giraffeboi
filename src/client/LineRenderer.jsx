@@ -37,7 +37,8 @@ export class LineRenderer extends React.Component {
 
   async componentDidMount() {
     try {
-      this.createRealDataTable();
+      // this.createRealDataTable();
+      this.createFakeDataTable()
       this.animationFrameId = window.setInterval(
         this.animateRealData,
         REASONABLE_API_REFRESH_RATE
@@ -57,8 +58,12 @@ export class LineRenderer extends React.Component {
       layers: [this.state.layer],
     };
 
+    console.log(config)
+
     if (!Object.keys(config.table).length) {
-      return null;
+      return (
+        <h1>No Results</h1>
+      )
     }
 
     return (
@@ -104,9 +109,9 @@ export class LineRenderer extends React.Component {
   }
 
   createFakeDataTable() {
-    return newTable(this.state.timestamps.length)
+    this.setState({table: newTable(this.state.timestamps.length)
       .addColumn("_time", "dateTime:RFC3339", "time", this.state.timestamps)
-      .addColumn("_value", "double", "number", this.state.values);
+      .addColumn("_value", "double", "number", this.state.values)});
   }
 
   async createRealDataTable() {

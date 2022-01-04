@@ -38,6 +38,89 @@ app.get("/linequery", (req, res) => {
   const bucket = "telegraf";
 
   const query = `
+  from(bucket: "${bucket}")
+    |> range(start: -30s)
+    |> filter(fn: (r) => r._measurement == "mem")
+    |> filter(fn: (r) => r._field == "used_percent")
+    |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+  `.trim();
+
+  influxProxy
+    .request({
+      method: "post",
+      url: "api/v2/query",
+      params: {
+        orgID,
+      },
+      data: {
+        query,
+        extern: {
+          type: "File",
+          package: null,
+          imports: null,
+          body: [
+            {
+              type: "OptionStatement",
+              assignment: {
+                type: "VariableAssignment",
+                id: { type: "Identifier", name: "v" },
+                init: {
+                  type: "ObjectExpression",
+                  properties: [
+                    {
+                      type: "Property",
+                      key: { type: "Identifier", name: "bucket" },
+                      value: { type: "StringLiteral", value: "telegraf" },
+                    },
+                    {
+                      type: "Property",
+                      key: { type: "Identifier", name: "timeRangeStart" },
+                      value: {
+                        type: "UnaryExpression",
+                        operator: "-",
+                        argument: {
+                          type: "DurationLiteral",
+                          values: [{ magnitude: 1, unit: "h" }],
+                        },
+                      },
+                    },
+                    {
+                      type: "Property",
+                      key: { type: "Identifier", name: "timeRangeStop" },
+                      value: {
+                        type: "CallExpression",
+                        callee: { type: "Identifier", name: "now" },
+                      },
+                    },
+                    {
+                      type: "Property",
+                      key: { type: "Identifier", name: "windowPeriod" },
+                      value: {
+                        type: "DurationLiteral",
+                        values: [{ magnitude: 10000, unit: "ms" }],
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+        dialect: { annotations: ["group", "datatype", "default"] },
+      },
+    })
+    .then((response) => {
+      res.send(response.data);
+    })
+    .catch((error) => {
+      res.send(error.message);
+    });
+});
+
+app.get("/wait-times", (req, res) => {
+  const bucket = "telegraf";
+
+  const query = `
   from(bucket: "telegraf")
     |> range(start: -30s)
     |> filter(fn: (r) => r._measurement == "mem")
