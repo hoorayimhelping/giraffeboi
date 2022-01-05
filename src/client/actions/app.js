@@ -1,3 +1,3 @@
-export const setSelectedPark = (parkName) => {
-  return {type: 'setSelectedPark', payload: parkName}
+export const setSelectedPark = (parkId) => {
+  return {type: 'setSelectedPark', payload: parkId}
 }

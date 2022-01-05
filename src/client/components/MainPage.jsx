@@ -12,22 +12,15 @@ import {setSelectedPark} from '../actions/app'
 class _MainPage extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      parks: []
-    }
 
     this.handleParkClick = this.handleParkClick.bind(this)
   }
 
-  handleParkClick(parkName) {
-    this.props.setSelectedPark(parkName)
+  handleParkClick(parkId) {
+    this.props.setSelectedPark(parkId)
   }
 
-  componentDidMount() {
-    this.setState({
-      parks: ['DisneyLand', 'Universal Studios', 'Sea World']
-    })
-  }
+  componentDidMount() {}
 
   render() {
     return (
@@ -40,15 +33,15 @@ class _MainPage extends React.Component {
             <Dropdown
               menu={onCollapse => (
                 <Dropdown.Menu onCollapse={onCollapse}>
-                  {this.state.parks.map(parkName => (
+                  {this.props.parks.map(park => (
                     <Dropdown.Item
-                      key={parkName}
-                      value={parkName}
-                      id={parkName}
+                      key={park.name}
+                      value={park.id}
+                      id={park.id}
                       onClick={this.handleParkClick}
-                      selected={this.props.selectedPark === parkName}
+                      selected={this.props.selectedPark === park.id}
                     >
-                      {parkName}
+                      {park.name}
                     </Dropdown.Item>
                   ))}
                 </Dropdown.Menu>
@@ -60,7 +53,7 @@ class _MainPage extends React.Component {
                   icon={IconFont.Plus_New}
                   color={ComponentColor.Primary}
                 >
-                  {this.props.selectedPark ? this.props.selectedPark : 'Theme Parks'}
+                  {this.props.selectedPark ? this.props.parks.find(park => park.id === this.props.selectedPark).name : 'Theme Parks'}
                 </Dropdown.Button>
               )}
             />
@@ -73,7 +66,6 @@ class _MainPage extends React.Component {
 }
 
 const mstp = (appState) => {
-  console.log('mstp', appState)
   return {
     parks: appState.parks,
     selectedPark: appState.selectedPark,
