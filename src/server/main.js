@@ -8,6 +8,13 @@ import request from "request-promise";
 import axios from "axios";
 import moment from "moment";
 
+import {
+  InfluxDB,
+  FluxTableMetaData,
+  flux,
+  fluxDuration,
+} from '@influxdata/influxdb-client'
+
 const baseURL = process.env.INFLUX_URL; // url of your cloud instance (e.g. https://us-west-2-1.aws.cloud2.influxdata.com/)
 const influxToken = process.env.INFLUX_TOKEN; // create an all access token in the UI, export it as INFLUX_TOKEN
 const orgID = process.env.ORG_ID; // export your org id;
@@ -33,6 +40,20 @@ app.get("/", (req, res) => {
 app.get("/dist/bundle.js", (req, res) => {
   res.sendFile("bundle.js", { root: "./dist" });
 });
+
+app.get('/query', (req, res) => {
+
+
+  // res.send(response.data);
+  // res.send(error.message);
+})
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 app.get("/linequery", (req, res) => {
   const bucket = "telegraf";
@@ -117,88 +138,6 @@ app.get("/linequery", (req, res) => {
     });
 });
 
-app.get("/wait-times", (req, res) => {
-  const bucket = "telegraf";
-
-  const query = `
-  from(bucket: "telegraf")
-    |> range(start: -30s)
-    |> filter(fn: (r) => r._measurement == "mem")
-    |> filter(fn: (r) => r._field == "used_percent")
-    |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
-  `.trim();
-
-  influxProxy
-    .request({
-      method: "post",
-      url: "api/v2/query",
-      params: {
-        orgID,
-      },
-      data: {
-        query,
-        extern: {
-          type: "File",
-          package: null,
-          imports: null,
-          body: [
-            {
-              type: "OptionStatement",
-              assignment: {
-                type: "VariableAssignment",
-                id: { type: "Identifier", name: "v" },
-                init: {
-                  type: "ObjectExpression",
-                  properties: [
-                    {
-                      type: "Property",
-                      key: { type: "Identifier", name: "bucket" },
-                      value: { type: "StringLiteral", value: "telegraf" },
-                    },
-                    {
-                      type: "Property",
-                      key: { type: "Identifier", name: "timeRangeStart" },
-                      value: {
-                        type: "UnaryExpression",
-                        operator: "-",
-                        argument: {
-                          type: "DurationLiteral",
-                          values: [{ magnitude: 1, unit: "h" }],
-                        },
-                      },
-                    },
-                    {
-                      type: "Property",
-                      key: { type: "Identifier", name: "timeRangeStop" },
-                      value: {
-                        type: "CallExpression",
-                        callee: { type: "Identifier", name: "now" },
-                      },
-                    },
-                    {
-                      type: "Property",
-                      key: { type: "Identifier", name: "windowPeriod" },
-                      value: {
-                        type: "DurationLiteral",
-                        values: [{ magnitude: 10000, unit: "ms" }],
-                      },
-                    },
-                  ],
-                },
-              },
-            },
-          ],
-        },
-        dialect: { annotations: ["group", "datatype", "default"] },
-      },
-    })
-    .then((response) => {
-      res.send(response.data);
-    })
-    .catch((error) => {
-      res.send(error.message);
-    });
-});
 
 app.get("/mapquery", (req, res) => {
   const start = "2019-02-01 00:00:00.000";

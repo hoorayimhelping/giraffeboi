@@ -1,7 +1,7 @@
 import React from "react";
-import ReactDOM from "react-dom";
 
-import { Plot, newTable, fromFlux } from "@influxdata/giraffe";
+import {Page} from '@influxdata/clockface'
+import {Plot, newTable, fromFlux} from "@influxdata/giraffe";
 
 const style = {
   width: "calc(70vw - 20px)",
@@ -37,12 +37,16 @@ export class LineRenderer extends React.Component {
 
   async componentDidMount() {
     try {
-      // this.createRealDataTable();
       this.createFakeDataTable()
       this.animationFrameId = window.setInterval(
-        this.animateRealData,
+        this.createFakeDataTable,
         REASONABLE_API_REFRESH_RATE
       );
+      // this.createRealDataTable();
+      // this.animationFrameId = window.setInterval(
+      //   this.animateRealData,
+      //   REASONABLE_API_REFRESH_RATE
+      // );
     } catch (error) {
       console.error(error);
     }
@@ -67,9 +71,14 @@ export class LineRenderer extends React.Component {
     }
 
     return (
-      <div style={style}>
-        <Plot config={config} />
-      </div>
+      <Page>
+        <Page.Header fullWidth={true} />
+        <Page.Contents fullWidth={true}>
+          <div style={style}>
+            <Plot config={config} />
+          </div>
+        </Page.Contents>
+      </Page>
     );
   }
 

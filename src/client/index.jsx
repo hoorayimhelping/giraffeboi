@@ -1,21 +1,21 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import {Provider} from 'react-redux'
+import {createStore} from 'redux'
 
 import '@influxdata/clockface/dist/index.css'
 
-import {AppWrapper, Page} from '@influxdata/clockface'
+import {AppWrapper} from '@influxdata/clockface'
+import {MainPage} from './components/MainPage'
+import {appReducer} from './reducers/app'
 
-import { LineRenderer } from "./LineRenderer";
-import { MapRenderer } from "./MapRenderer";
+const store = createStore(appReducer)
 
 ReactDOM.render(
-  <AppWrapper>
-    <Page>
-      <Page.Header fullWidth={true} />
-      <Page.Contents fullWidth={true}>
-        <LineRenderer />
-      </Page.Contents>
-    </Page>
-  </AppWrapper>,
+  <Provider store={store}>
+    <AppWrapper>
+      <MainPage />
+    </AppWrapper>
+  </Provider>,
   document.getElementById("root")
 );
