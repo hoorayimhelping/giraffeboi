@@ -2,12 +2,12 @@ const initialState = {
   selectedPark: null,
   parks: [
     {
-      id: 0,
-      name: 'DisneyLand'
+      id: 6,
+      name: 'Magic Kingdom'
     },
     {
-      id: 1,
-      name: 'Universal Studios'
+      id: 7,
+      name: 'Disney California Adventure'
     },
     {
       id: 5,

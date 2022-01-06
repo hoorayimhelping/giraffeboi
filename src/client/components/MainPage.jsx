@@ -8,6 +8,7 @@ import {
 } from "@influxdata/clockface";
 
 import {setSelectedPark} from '../actions/app'
+import {ParksTable} from './ParksTable'
 
 class _MainPage extends React.Component {
   constructor(props) {
@@ -59,7 +60,9 @@ class _MainPage extends React.Component {
             />
           </Page.ControlBarLeft>
         </Page.ControlBar>
-        <Page.Contents fullWidth={true}></Page.Contents>
+        <Page.Contents fullWidth={true} scrollable={true}>
+          {this.props.selectedPark ? (<ParksTable />) : <h2>Please Select A Park</h2>}
+        </Page.Contents>
       </Page>
     );
   }

@@ -11,9 +11,10 @@
   },
   "dependencies": {
     "@influxdata/clockface": "^3.1.10",
-    "@influxdata/giraffe": "^2.0.0",
+    "@influxdata/giraffe": "^2.23.0",
     "@influxdata/influxdb-client": "^1.21.0",
     "axios": "^0.20.0",
+    "classnames": "^2.3.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "prettier": "^2.2.1",
@@ -36,6 +37,8 @@
     "@types/react-dom": "^16.9.8",
     "babel-loader": "^8.1.0",
     "css-loader": "^6.5.1",
+    "css-modules-typescript-loader": "^4.0.1",
+    "sass-loader": "^12.4.0",
     "style-loader": "^3.3.1",
     "webpack": "^5.1.2",
     "webpack-cli": "^4.0.0"
