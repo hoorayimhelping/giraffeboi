@@ -25,7 +25,7 @@ class _MainPage extends React.Component {
 
   async fetchParkRides(parkId) {
     const resp = await fetch(
-      `http://localhost:8617/parks/${parkId}/rides/Open`,
+      `http://localhost:8617/api/parks/${parkId}/rides/Open`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +57,7 @@ class _MainPage extends React.Component {
         <Page.Header fullWidth={true}>
           <Page.Title title="Park Rides" />
         </Page.Header>
-        <Page.ControlBar fullWidth={false}>
+        <Page.ControlBar fullWidth={true}>
           <Page.ControlBarLeft>
             <Dropdown
               menu={onCollapse => (

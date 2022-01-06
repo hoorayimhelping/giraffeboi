@@ -34,15 +34,7 @@ const influxProxy = axios.create({
 const app = express();
 const port = 8617;
 
-app.get("/", (req, res) => {
-  res.sendFile("index.html", { root: "./" });
-});
-
-app.get("/dist/bundle.js", (req, res) => {
-  res.sendFile("bundle.js", { root: "./dist" });
-});
-
-app.get("/parks/:parkId/rides/:status", (req, res) => {
+app.get("/api/parks/:parkId/rides/:status", (req, res) => {
   const parkId = req.params.parkId;
 
   let status = "Open";
@@ -62,7 +54,6 @@ app.get("/parks/:parkId/rides/:status", (req, res) => {
       }
     })
     .then((response) => {
-      console.log("get-rides-for-park success", response);
       res.send(response.data);
     })
     .catch((error) => {
@@ -70,276 +61,37 @@ app.get("/parks/:parkId/rides/:status", (req, res) => {
       res.send(error.message);
     });
 });
-//   const query = `
-// status = "${status}"
-// from(bucket: "parks-waittime")
-// |> range(start: -15m)
-// |> filter(fn: (r) => r["_measurement"] == "parks_ride")
-// |> filter(fn: (r) => r["_field"] == "is_open")
-// |> filter(fn: (r) => r["park_id"] == ${parkId})
-// |> filter(fn: (r) => if status == "closed" then r["_value"] == false else r["_value"] == true )
-// |> keep(columns: ["name"])
-// |> unique(column: "name")
-// |> sort(columns: ["name"], desc: false)
-// |> group()
-// `
 
-//   influxProxy
-//     .request({
-//       method: "post",
-//       url: "api/v2/query",
-//       params: {
-//         orgID,
-//       },
-//       data: {
-//         query,
-//         extern: {
-//           type: "File",
-//           package: null,
-//           imports: null,
-//           body: [
-//             {
-//               type: "OptionStatement",
-//               assignment: {
-//                 type: "VariableAssignment",
-//                 id: { type: "Identifier", name: "v" },
-//                 init: {
-//                   type: "ObjectExpression",
-//                   properties: [
-//                     {
-//                       type: "Property",
-//                       key: { type: "Identifier", name: "bucket" },
-//                       value: { type: "StringLiteral", value: "telegraf" },
-//                     },
-//                     {
-//                       type: "Property",
-//                       key: { type: "Identifier", name: "timeRangeStart" },
-//                       value: {
-//                         type: "UnaryExpression",
-//                         operator: "-",
-//                         argument: {
-//                           type: "DurationLiteral",
-//                           values: [{ magnitude: 1, unit: "h" }],
-//                         },
-//                       },
-//                     },
-//                     {
-//                       type: "Property",
-//                       key: { type: "Identifier", name: "timeRangeStop" },
-//                       value: {
-//                         type: "CallExpression",
-//                         callee: { type: "Identifier", name: "now" },
-//                       },
-//                     },
-//                     {
-//                       type: "Property",
-//                       key: { type: "Identifier", name: "windowPeriod" },
-//                       value: {
-//                         type: "DurationLiteral",
-//                         values: [{ magnitude: 10000, unit: "ms" }],
-//                       },
-//                     },
-//                   ],
-//                 },
-//               },
-//             },
-//           ],
-//         },
-//         dialect: { annotations: ["group", "datatype", "default"] },
-//       },
-//     })
-//     .then((response) => {
-//       console.log('get-rides-for-park success', response)
-//       res.send(response.data);
-//     })
-//     .catch((error) => {
-//       res.send(error.message);
-//     });
-// })
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-app.get("/linequery", (req, res) => {
-  const bucket = "telegraf";
-
-  const query = `
-  from(bucket: "${bucket}")
-    |> range(start: -30s)
-    |> filter(fn: (r) => r._measurement == "mem")
-    |> filter(fn: (r) => r._field == "used_percent")
-    |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
-  `.trim();
+app.get("/api/parks/:parkId/ride/:rideName/summary", (req, res) => {
+  const parkId = req.params.parkId;
+  const rideName = req.params.rideName;
 
   influxProxy
     .request({
       method: "post",
-      url: "api/v2/query",
-      params: {
-        orgID,
-      },
+      url: `api/v2/scripts/08b78f9fe2e60000/invoke`,
       data: {
-        query,
-        extern: {
-          type: "File",
-          package: null,
-          imports: null,
-          body: [
-            {
-              type: "OptionStatement",
-              assignment: {
-                type: "VariableAssignment",
-                id: { type: "Identifier", name: "v" },
-                init: {
-                  type: "ObjectExpression",
-                  properties: [
-                    {
-                      type: "Property",
-                      key: { type: "Identifier", name: "bucket" },
-                      value: { type: "StringLiteral", value: "telegraf" },
-                    },
-                    {
-                      type: "Property",
-                      key: { type: "Identifier", name: "timeRangeStart" },
-                      value: {
-                        type: "UnaryExpression",
-                        operator: "-",
-                        argument: {
-                          type: "DurationLiteral",
-                          values: [{ magnitude: 1, unit: "h" }],
-                        },
-                      },
-                    },
-                    {
-                      type: "Property",
-                      key: { type: "Identifier", name: "timeRangeStop" },
-                      value: {
-                        type: "CallExpression",
-                        callee: { type: "Identifier", name: "now" },
-                      },
-                    },
-                    {
-                      type: "Property",
-                      key: { type: "Identifier", name: "windowPeriod" },
-                      value: {
-                        type: "DurationLiteral",
-                        values: [{ magnitude: 10000, unit: "ms" }],
-                      },
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+        params: {
+          parkid: parkId,
+          ride: rideName,
         },
-        dialect: { annotations: ["group", "datatype", "default"] },
-      },
+      }
     })
     .then((response) => {
       res.send(response.data);
     })
     .catch((error) => {
+      console.error(error);
       res.send(error.message);
     });
 });
 
-app.get("/mapquery", (req, res) => {
-  const start = "2019-02-01 00:00:00.000";
-  const stop = "2020-02-28 23:59:00.000";
-
-  const query = `
-    from(bucket: "palak+cloud2's Bucket")
-    |> range(start: ${moment(start).toISOString()}, stop: ${moment(
-    stop
-  ).toISOString()})
-    |> filter(fn: (r) => r["_measurement"] == "migration")
-    |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
-    |> yield(name: "mean")
-    `.trim();
-
-  influxProxy
-    .request({
-      method: "post",
-      url: "api/v2/query",
-      params: {
-        orgID,
-      },
-      data: {
-        query,
-        extern: {
-          type: "File",
-          package: null,
-          imports: null,
-          body: [
-            {
-              type: "OptionStatement",
-              assignment: {
-                type: "VariableAssignment",
-                id: { type: "Identifier", name: "v" },
-                init: {
-                  type: "ObjectExpression",
-                  properties: [
-                    {
-                      type: "Property",
-                      key: { type: "Identifier", name: "bucket" },
-                      value: { type: "StringLiteral", value: "telegraf" },
-                    },
-                    {
-                      type: "Property",
-                      key: { type: "Identifier", name: "timeRangeStart" },
-                      value: {
-                        type: "UnaryExpression",
-                        operator: "-",
-                        argument: {
-                          type: "DurationLiteral",
-                          values: [{ magnitude: 1, unit: "h" }],
-                        },
-                      },
-                    },
-                    {
-                      type: "Property",
-                      key: { type: "Identifier", name: "timeRangeStop" },
-                      value: {
-                        type: "CallExpression",
-                        callee: { type: "Identifier", name: "now" },
-                      },
-                    },
-                    {
-                      type: "Property",
-                      key: { type: "Identifier", name: "windowPeriod" },
-                      value: {
-                        type: "DurationLiteral",
-                        values: [{ magnitude: 10000, unit: "ms" }],
-                      },
-                    },
-                  ],
-                },
-              },
-            },
-          ],
-        },
-        dialect: { annotations: ["group", "datatype", "default"] },
-      },
-    })
-    .then((response) => {
-      res.send(response.data);
-    })
-    .catch((error) => {
-      res.send(error.message);
-    });
+app.get("/dist/bundle.js", (req, res) => {
+  res.sendFile("bundle.js", { root: "./dist" });
 });
 
-app.get("/tileServerUrl", (req, res) => {
-  res.send({ url: localMapEndpoint });
-});
-
-app.get("/map/:z/:x/:y", (req, res) => {
-  const { x, y, z } = req.params;
-
-  const link = `https://api.mapbox.com/styles/v1/influxdata/ckhl79okh00o919npquotuqxp/tiles/256/${z}/${x}/${y}?access_token=${apiKey}`;
-
-  let options = { method: "GET", uri: link, headers: { Accept: "image/png" } };
-
-  request(options.uri, options).pipe(res);
+app.get('*', (req, res) => {
+  res.sendFile("index.html", { root: "./" });
 });
 
 app.listen(port, () => {

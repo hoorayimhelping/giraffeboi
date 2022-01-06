@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
 import { Table } from "@influxdata/clockface";
 
@@ -23,8 +24,8 @@ class _ParksTable extends React.Component {
         <Table.Body>
           {this.props.selectParkRides.map((ride) => {
             return (
-              <Table.Row>
-                <Table.Cell><a href={``}>{ride}</a></Table.Cell>
+              <Table.Row key={ride}>
+                <Table.Cell><Link to={`/rides/${ride}`}>{ride}</Link></Table.Cell>
               </Table.Row>
             )
           })}

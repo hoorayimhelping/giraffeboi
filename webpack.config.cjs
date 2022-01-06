@@ -4,6 +4,8 @@ var webpack = require('webpack');
 module.exports = {
   context: path.resolve(__dirname, 'src'),
   entry: './client/index.jsx',
+  mode: 'development',
+  devtool: 'eval',
   module: {
     rules: [
       {
