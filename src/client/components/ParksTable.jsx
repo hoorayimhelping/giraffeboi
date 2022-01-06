@@ -3,47 +3,6 @@ import { connect } from "react-redux";
 
 import { Table } from "@influxdata/clockface";
 
-// const config = {
-//   fluxResponse: null,
-//   layers: [
-//     {
-//       type: "table",
-//       properties: {
-//         colors: DEFAULT_TABLE_COLORS,
-//         decimalPlaces: {
-//           digits: 3,
-//           isEnforced: true,
-//         },
-//         tableOptions: {
-//           fixFirstColumn: false,
-//           verticalTimeAxis: true,
-//         },
-//         fieldOptions: [
-//           // { displayName: "_value", internalName: "_value", visible: true },
-//           // { displayName: "_field", internalName: "_field", visible: true },
-//           // { displayName: "_measurement", internalName: "_measurement", visible: true },
-//           { displayName: "Ride Name", internalName: "name", visible: true },
-//           // { displayName: "result", internalName: "result", visible: true },
-//           // { displayName: "table", internalName: "table", visible: true },
-//         ],
-//         timeFormat: "YYYY-MM-DD HH:mm:ss ZZ",
-//       },
-//       timeZone: "local",
-//       tableTheme: 'dark'
-//     },
-//   ],
-// };
-
-const config = {
-  fluxResponse: null,
-  layers: [
-    {
-      type: "simple table",
-      showAll: false,
-    },
-  ],
-};
-
 class _ParksTable extends React.Component {
   constructor(props) {
     super(props);
@@ -85,7 +44,6 @@ class _ParksTable extends React.Component {
       return null;
     }
 
-    console.log("rides", this.state.rides);
     return (
       <Table>
         <Table.Header>
@@ -97,30 +55,13 @@ class _ParksTable extends React.Component {
           {this.state.rides.map((ride) => {
             return (
               <Table.Row>
-                <Table.Cell>{ride}</Table.Cell>
+                <Table.Cell><a href={``}>{ride}</a></Table.Cell>
               </Table.Row>
             )
           })}
         </Table.Body>
       </Table>
     );
-
-    console.log("table", this.state.results, this.state.table);
-    config.fluxResponse = this.state.results;
-
-    return (
-      <div
-        style={{
-          width: "calc(70vw - 20px)",
-          height: "calc(70vh - 20px)",
-          margin: "40px",
-        }}
-      >
-        <Plot config={config} />
-      </div>
-    );
-
-    // return this.props.parks.find(park => park.id === this.props.selectedPark).name
   }
 }
 
