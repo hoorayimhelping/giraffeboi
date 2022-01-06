@@ -6,37 +6,6 @@ import { Table } from "@influxdata/clockface";
 class _ParksTable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      rides: [],
-    };
-  }
-
-  async componentDidMount() {
-    const resp = await fetch(
-      `http://localhost:8617/parks/${this.props.selectedPark}/rides/Open`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      }
-    );
-
-    const resultsCSV = await resp.text();
-
-    try {
-      const results = resultsCSV.split("\r\n");
-
-      const rides = results
-        .map((result) => result.split(",").pop())
-        .filter((ride) => ride.trim() !== "" && ride !== "name");
-
-      this.setState({
-        rides,
-      });
-    } catch (error) {
-      console.error(error);
-    }
   }
 
   render() {
@@ -52,7 +21,7 @@ class _ParksTable extends React.Component {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {this.state.rides.map((ride) => {
+          {this.props.selectParkRides.map((ride) => {
             return (
               <Table.Row>
                 <Table.Cell><a href={``}>{ride}</a></Table.Cell>
@@ -66,10 +35,10 @@ class _ParksTable extends React.Component {
 }
 
 const mstp = (appState) => {
-  console.log("selected park", appState.selectedPark);
   return {
     parks: appState.parks,
     selectedPark: appState.selectedPark,
+    selectParkRides: appState.selectedParkRides
   };
 };
 

@@ -7,7 +7,7 @@ import {
   Page,
 } from "@influxdata/clockface";
 
-import {setSelectedPark} from '../actions/app'
+import {setSelectedPark, setSelectedParkRides} from '../actions/app'
 import {ParksTable} from './ParksTable'
 
 class _MainPage extends React.Component {
@@ -15,10 +15,38 @@ class _MainPage extends React.Component {
     super(props)
 
     this.handleParkClick = this.handleParkClick.bind(this)
+    this.fetchParkRides = this.fetchParkRides.bind(this)
   }
 
   handleParkClick(parkId) {
     this.props.setSelectedPark(parkId)
+    this.fetchParkRides(parkId)
+  }
+
+  async fetchParkRides(parkId) {
+    const resp = await fetch(
+      `http://localhost:8617/parks/${parkId}/rides/Open`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+      }
+    );
+
+    const resultsCSV = await resp.text();
+
+    try {
+      const results = resultsCSV.split("\r\n");
+
+      const rides = results
+        .map((result) => result.split(",").pop())
+        .filter((ride) => ride.trim() !== "" && ride !== "name");
+
+      this.props.setSelectedParkRides(rides)
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   componentDidMount() {}
@@ -61,7 +89,11 @@ class _MainPage extends React.Component {
           </Page.ControlBarLeft>
         </Page.ControlBar>
         <Page.Contents fullWidth={true} scrollable={true}>
-          {this.props.selectedPark ? (<ParksTable />) : <h2>Please Select A Park</h2>}
+          {
+            this.props.selectedPark ?
+              <ParksTable /> :
+              <h2>Please Select A Park</h2>
+          }
         </Page.Contents>
       </Page>
     );
@@ -76,7 +108,8 @@ const mstp = (appState) => {
 }
 
 const mdtp = {
-  setSelectedPark
+  setSelectedPark,
+  setSelectedParkRides
 }
 
 const connector = connect(mstp, mdtp)

@@ -14,6 +14,7 @@ const initialState = {
       name: "EPCOT",
     },
   ],
+  selectedParkRides: []
 };
 
 export const appReducer = (state = initialState, action) => {
@@ -23,6 +24,13 @@ export const appReducer = (state = initialState, action) => {
         ...state,
         selectedPark: action.payload,
       };
+    }
+
+    case 'setSelectedParkRides': {
+      return {
+        ...state,
+        selectedParkRides: action.payload
+      }
     }
 
     default:
