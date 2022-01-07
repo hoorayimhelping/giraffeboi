@@ -1,0 +1,32 @@
+
+@media (max-width: 575px) {
+  td.cf-table--cell {
+    font-size: 16px !important;
+    padding: 8px !important;
+  }
+
+  .cf-heading.cf-page--title {
+    font-size: 32px !important;
+  }
+
+  .cf-dropdown--selected {
+    font-size: 24px !important;
+  }
+
+  .cf-dropdown-item {
+    font-size: px !important;
+    padding: 16px 8px !important;
+  }
+
+  h3 {
+    font-size: 24px !important;
+  }
+}
+
+.link {
+  cursor: pointer !important;
+}
+
+.link:hover {
+  text-decoration: underline !important;
+}

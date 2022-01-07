@@ -2,6 +2,7 @@ import React from "react";
 import {connect} from 'react-redux'
 import {
   ComponentColor,
+  ComponentSize,
   Dropdown,
   IconFont,
   Page,
@@ -55,7 +56,7 @@ class _MainPage extends React.Component {
     return (
       <Page>
         <Page.Header fullWidth={true}>
-          <Page.Title title="Park Rides" />
+          <Page.Title title="Park Rides Times" />
         </Page.Header>
         <Page.ControlBar fullWidth={true}>
           <Page.ControlBarLeft>
@@ -69,6 +70,7 @@ class _MainPage extends React.Component {
                       id={park.id}
                       onClick={this.handleParkClick}
                       selected={this.props.selectedPark === park.id}
+                      size={ComponentSize.Large}
                     >
                       {park.name}
                     </Dropdown.Item>
@@ -81,6 +83,7 @@ class _MainPage extends React.Component {
                   onClick={onClick}
                   icon={IconFont.Plus_New}
                   color={ComponentColor.Primary}
+                  size={ComponentSize.Large}
                 >
                   {this.props.selectedPark ? this.props.parks.find(park => park.id === this.props.selectedPark).name : 'Theme Parks'}
                 </Dropdown.Button>
@@ -92,7 +95,7 @@ class _MainPage extends React.Component {
           {
             this.props.selectedPark ?
               <ParksTable /> :
-              <h2>Please Select A Park</h2>
+              <h2 style={{textAlign:"center"}}>Please Select A Park</h2>
           }
         </Page.Contents>
       </Page>

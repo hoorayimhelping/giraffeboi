@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {connect} from 'react-redux'
-import {useParams} from "react-router-dom"
+import {useParams, Link} from "react-router-dom"
 
 import {Page, Table} from "@influxdata/clockface";
 import {Plot, fromFlux} from "@influxdata/giraffe";
@@ -18,7 +18,7 @@ class _Rides extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      results: '',
+      table: null,
       summary: []
     }
   }
@@ -45,7 +45,18 @@ class _Rides extends React.Component {
         }
       })
 
-    const results = fromFlux(resultsCSV);
+    const graphResp = await fetch(
+      `http://localhost:8617/api/parks/${this.props.selectedPark}/ride/${this.props.params.rideName}/graph`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+      }
+    );
+
+    const graphResultsCSV = await graphResp.text();
+    const results = fromFlux(graphResultsCSV);
 
     this.setState({
       table: results.table,
@@ -58,12 +69,16 @@ class _Rides extends React.Component {
       return null
     }
 
+    if (!this.state.table) {
+      return null
+    }
+
     config.table = this.state.table
 
     return (
       <Page>
         <Page.Header fullWidth={true}>
-          <Page.Title title="Park Rides" />
+          <Link to="/"><Page.Title title="Park Ride Times" className="link" /></Link>
         </Page.Header>
         <Page.ControlBar fullWidth={false}>
           <Page.ControlBarLeft>
@@ -87,9 +102,9 @@ class _Rides extends React.Component {
               {this.state.summary.map((hour) => {
                 return (
                   <Table.Row key={hour.time}>
-                    <Table.Cell>{hour.time}</Table.Cell>
+                    <Table.Cell>{new Date(hour.time).toLocaleString()}</Table.Cell>
                     <Table.Cell>{hour.max}</Table.Cell>
-                    <Table.Cell>{hour.avg}</Table.Cell>
+                    <Table.Cell>{parseInt(hour.avg, 10).toFixed(2)}</Table.Cell>
                     <Table.Cell>{hour.min}</Table.Cell>
                   </Table.Row>
                 )
@@ -97,9 +112,9 @@ class _Rides extends React.Component {
             </Table.Body>
           </Table>
           <div style={{
-            width: "calc(70vw - 20px)",
-            height: "calc(70vh - 20px)",
-            margin: "10px",
+            width: "100%",
+            height: "calc(20vh - 20px)",
+            margin: "auto",
           }}>
             <Plot config={config} />
           </div>

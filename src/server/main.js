@@ -86,6 +86,94 @@ app.get("/api/parks/:parkId/ride/:rideName/summary", (req, res) => {
     });
 });
 
+app.get("/api/parks/:parkId/ride/:rideName/graph", (req, res) => {
+  const parkId = req.params.parkId;
+  const rideName = req.params.rideName;
+
+  const query = `
+  from(bucket: "parks-waittime")
+|> range(start: -2d)
+|> filter(fn: (r) => r["_measurement"] == "parks_ride")
+|> filter(fn: (r) => r["_field"] == "wait_time")
+|> filter(fn: (r) => r["park_id"] == "${parkId}")
+|> filter(fn: (r) => r["name"] == "${rideName}")
+|> group(columns: ["id"], mode:"by")
+|> aggregateWindow(every: 1h, fn: mean, createEmpty:false)
+|> yield(name: "mean")
+  `.trim();
+
+  influxProxy
+    .request({
+      method: "post",
+      url: "api/v2/query",
+      params: {
+        orgID,
+      },
+      data: {
+        query,
+        extern: {
+          type: "File",
+          package: null,
+          imports: null,
+          body: [
+            {
+              type: "OptionStatement",
+              assignment: {
+                type: "VariableAssignment",
+                id: { type: "Identifier", name: "v" },
+                init: {
+                  type: "ObjectExpression",
+                  properties: [
+                    {
+                      type: "Property",
+                      key: { type: "Identifier", name: "bucket" },
+                      value: { type: "StringLiteral", value: "telegraf" },
+                    },
+                    {
+                      type: "Property",
+                      key: { type: "Identifier", name: "timeRangeStart" },
+                      value: {
+                        type: "UnaryExpression",
+                        operator: "-",
+                        argument: {
+                          type: "DurationLiteral",
+                          values: [{ magnitude: 1, unit: "h" }],
+                        },
+                      },
+                    },
+                    {
+                      type: "Property",
+                      key: { type: "Identifier", name: "timeRangeStop" },
+                      value: {
+                        type: "CallExpression",
+                        callee: { type: "Identifier", name: "now" },
+                      },
+                    },
+                    {
+                      type: "Property",
+                      key: { type: "Identifier", name: "windowPeriod" },
+                      value: {
+                        type: "DurationLiteral",
+                        values: [{ magnitude: 10000, unit: "ms" }],
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+        dialect: { annotations: ["group", "datatype", "default"] },
+      },
+    })
+    .then((response) => {
+      res.send(response.data);
+    })
+    .catch((error) => {
+      res.send(error.message);
+    });
+});
+
 app.get("/dist/bundle.js", (req, res) => {
   res.sendFile("bundle.js", { root: "./dist" });
 });

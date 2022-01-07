@@ -5,6 +5,7 @@ import { createStore } from "redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import "@influxdata/clockface/dist/index.css";
+import "./styles.css"
 
 import { AppWrapper } from "@influxdata/clockface";
 import { MainPage } from "./components/MainPage";
